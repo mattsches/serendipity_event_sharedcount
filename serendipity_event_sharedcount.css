@@ -1,0 +1,60 @@
+/*@todo use generic plugin path*/
+@font-face {
+    font-family: 'icomoon';
+    src: url('{PLUGIN_PATH}fonts/icomoon.eot?#s6phsg');
+    src: url('{PLUGIN_PATH}fonts/icomoon.eot?#iefixs6phsg') format('embedded-opentype'),
+    url('{PLUGIN_PATH}fonts/icomoon.woff?s6phsg') format('woff'),
+    url('{PLUGIN_PATH}fonts/icomoon.ttf?s6phsg') format('truetype'),
+    url('{PLUGIN_PATH}fonts/icomoon.svg#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+footer div.serendipity_sharedcount {
+    font-size: 1.2em;
+}
+
+#dashboard_sharedcount [class^="icon-"]:before, #dashboard_sharedcount [class*=" icon-"]:before,
+[class^="icon-"], [class*=" icon-"] {
+    font-family: 'icomoon';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.screen-reader-text {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+}
+
+.serendipity_sharedcount .icon-facebook2:before {
+    content: "\ea8d";
+}
+.serendipity_sharedcount .icon-twitter2:before {
+    content: "\ea92";
+}
+.serendipity_sharedcount .icon-google-plus2:before {
+    content: "\ea89";
+}
+.serendipity_sharedcount .icon-pinterest2:before {
+    content: "\ead1";
+}
+.serendipity_sharedcount .icon-linkedin:before {
+    content: "\eac8";
+}
+.serendipity_sharedcount .icon-stumbleupon:before {
+    content: "\eacd";
+}
+#dashboard_sharedcount h3 [class^="icon-"]:before, #dashboard_sharedcount [class*=" icon-"]:before,
+[class^="icon-"], [class*=" icon-"] {
+    font-family: 'fontello';
+    content: '\e807';
+}
