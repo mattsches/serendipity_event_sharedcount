@@ -39,7 +39,7 @@ class serendipity_event_sharedcount extends serendipity_event
                 'php' => '5.4'
             )
         );
-        $propbag->add('version', '0.0.2');
+        $propbag->add('version', '0.0.3');
         $propbag->add(
             'groups',
             version_compare($serendipity['version'], '2.0.beta1') >= 0 ? array(
@@ -322,9 +322,7 @@ class serendipity_event_sharedcount extends serendipity_event
         $filemtimeDiff = $this->getFilemtimeDiff($currentTimestamp, $filename);
         $cacheTTL = $this->getCacheTtl($lastModifiedDiff);
         if ($filemtimeDiff < $cacheTTL) {
-            $fp = fopen($filename, 'rb');
-            $result = fread($fp, filesize($filename));
-            fclose($fp);
+            $result = file_get_contents($filename);
             return $result;
         }
         return null;
@@ -343,9 +341,7 @@ class serendipity_event_sharedcount extends serendipity_event
         if (!is_dir($cache_dir)) {
             mkdir($cache_dir);
         }
-        $fp = fopen($filename, 'wb');
-        fwrite($fp, $result);
-        fclose($fp);
+        file_put_contents($filename, $result);
     }
 
     /**

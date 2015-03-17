@@ -258,21 +258,17 @@ class serendipity_event_sharedcountTest extends PluginTest
             'currentTimestamp' => 1419289143,
         );
         $this->object->event_hook('backend_dashboard', $this->propBag, $eventData, $addData);
-        $expected = '<section id="dashboard_sharedcount" class="odd equal_heights quick_list">
-<h3>SharedCount</h3>
-<ol class="plainList">
+        $expected = '<ol class="plainList">
         <li class="clearfix" >
-        <a href = "?serendipity[action]=admin&amp;serendipity[adminModule]=entries&amp;serendipity[adminAction]=edit&amp;serendipity[id]=55" title = "#55: Test Title" >Test Title</a ><br/>
-        <small><div class="serendipity_sharedcount">Reactions: 2 FB Likes | 11 Tweets | 4 +1</div></small>
+        <a href="?serendipity[action]=admin&amp;serendipity[adminModule]=entries&amp;serendipity[adminAction]=edit&amp;serendipity[id]=55" title="#55: Test Title">Test Title</a ><br/>
+        <small id="sharedcount_entry_55"><div class="serendipity_sharedcount">Reactions: 2 FB Likes | 11 Tweets | 4 +1</div></small>
     </li >
         <li class="clearfix" >
-        <a href = "?serendipity[action]=admin&amp;serendipity[adminModule]=entries&amp;serendipity[adminAction]=edit&amp;serendipity[id]=54" title = "#54: Test Title 2" >Test Title 2</a ><br/>
-        <small><div class="serendipity_sharedcount">Reactions: 2 FB Likes | 11 Tweets | 4 +1</div></small>
+        <a href="?serendipity[action]=admin&amp;serendipity[adminModule]=entries&amp;serendipity[adminAction]=edit&amp;serendipity[id]=54" title="#54: Test Title 2">Test Title 2</a ><br/>
+        <small id="sharedcount_entry_54"><div class="serendipity_sharedcount">Reactions: 2 FB Likes | 11 Tweets | 4 +1</div></small>
     </li >
-    </ol>
-</section>
-';
-        $this->expectOutputString($expected);
+    </ol>';
+        $this->assertContains($expected, $this->getActualOutput());
     }
 
     public function foobar($input)

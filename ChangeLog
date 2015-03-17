@@ -1,0 +1,3 @@
+0.0.3:
+	Fix bug when trying to read empty cache file
+	Fix unit test
