@@ -6,7 +6,7 @@ if (IN_serendipity !== true) {
 
 require_once __DIR__ . '/RequestWrapper.php';
 
-@serendipity_plugin_api::load_language(dirname(__FILE__));
+@serendipity_plugin_api::load_language(__DIR__);
 
 /**
  * Class serendipity_event_sharedcount
@@ -54,7 +54,7 @@ class serendipity_event_sharedcount extends serendipity_event
             array(
                 'frontend_display' => true,
                 'entry_display' => true,
-                'backend_dashboard' => version_compare($serendipity['version'], '2.0.beta1') >= 0 ? true : false,
+                'backend_dashboard' => version_compare($serendipity['version'], '2.0.beta1') >= 0,
                 'css' => true,
                 'css_backend' => true,
                 'external_plugin' => true,
@@ -227,8 +227,8 @@ class serendipity_event_sharedcount extends serendipity_event
                         )
                     );
                     $tfile = serendipity_getTemplateFile('backend_dashboard.tpl', 'serendipityPath');
-                    if (!$tfile || $tfile == 'backend_dashboard.tpl') {
-                        $tfile = dirname(__FILE__) . '/backend_dashboard.tpl';
+                    if (!$tfile || $tfile === 'backend_dashboard.tpl') {
+                        $tfile = __DIR__ . '/backend_dashboard.tpl';
                     }
 //                    $inclusion = $serendipitySmarty->security_settings[INCLUDE_ANY];
 //                    $serendipitySmarty->security_settings[INCLUDE_ANY] = true;
@@ -241,12 +241,12 @@ class serendipity_event_sharedcount extends serendipity_event
                 case 'css':
                     if ($this->get_config('use_icons')) {
                         $out = serendipity_getTemplateFile('serendipity_event_sharedcount.css', 'serendipityPath');
-                        if ($out && $out != 'serendipity_event_sharedcount.css') {
+                        if ($out && $out !== 'serendipity_event_sharedcount.css') {
                             $eventData .= file_get_contents($out);
                         } else {
-                            $eventData .= file_get_contents(dirname(__FILE__) . '/serendipity_event_sharedcount.css');
+                            $eventData .= file_get_contents(__DIR__ . '/serendipity_event_sharedcount.css');
                         }
-                        $pluginpath = pathinfo(dirname(__FILE__));
+                        $pluginpath = pathinfo(__DIR__);
                         $pluginpath = basename(rtrim($pluginpath['dirname'], '/')) . '/serendipity_event_sharedcount/';
                         $search = array('{PLUGIN_PATH}');
                         $replace = array('plugins/' . $serendipity['serendipityHTTPPath'] . $pluginpath);
@@ -322,8 +322,7 @@ class serendipity_event_sharedcount extends serendipity_event
         $filemtimeDiff = $this->getFilemtimeDiff($currentTimestamp, $filename);
         $cacheTTL = $this->getCacheTtl($lastModifiedDiff);
         if ($filemtimeDiff < $cacheTTL) {
-            $result = file_get_contents($filename);
-            return $result;
+            return file_get_contents($filename);
         }
         return null;
     }
@@ -338,8 +337,9 @@ class serendipity_event_sharedcount extends serendipity_event
     {
         $filename = $this->getCacheFilename($url);
         $cache_dir = dirname($filename);
-        if (!is_dir($cache_dir)) {
-            mkdir($cache_dir);
+        if (!@mkdir($cache_dir) && !is_dir($cache_dir)) {
+            // TODO log error or throw exception
+            return;
         }
         file_put_contents($filename, $result);
     }
@@ -417,66 +417,50 @@ class serendipity_event_sharedcount extends serendipity_event
     }
 
     /**
-     * @param $lastModifiedTimestamp
-     * @param $currentTimestamp
+     * @param string $lastModifiedTimestamp
+     * @param int $currentTimestamp
      * @return int
      */
     protected function getLastModifiedDiff($lastModifiedTimestamp, $currentTimestamp)
     {
-        if ($currentTimestamp !== null && $lastModifiedTimestamp !== null) {
-            $lastModifiedDiff = $currentTimestamp - $lastModifiedTimestamp;
-
-            return $lastModifiedDiff;
-        } elseif ($currentTimestamp === null && $lastModifiedTimestamp !== null) {
-            $lastModifiedDiff = time() - $lastModifiedTimestamp;
-
-            return $lastModifiedDiff;
+        if ($lastModifiedTimestamp !== null) {
+            if ($currentTimestamp !== null) {
+                return $currentTimestamp - $lastModifiedTimestamp;
+            }
+            return time() - $lastModifiedTimestamp;
         } else {
-            $lastModifiedDiff = $currentTimestamp;
-
-            return $lastModifiedDiff;
+            return $currentTimestamp;
         }
     }
 
     /**
-     * @param $lastModifiedDiff
+     * @param int $lastModifiedDiff
      * @return float|int
      */
     protected function getCacheTtl($lastModifiedDiff)
     {
         $cacheTTL = (int)$this->get_config('cache_ttl');
-        if ($this->get_config('logarithmic_cache_ttl') == true) {
+        if ($this->get_config('logarithmic_cache_ttl') === true) {
             if ($lastModifiedDiff <= $cacheTTL) {
-                $cacheTTL = $cacheTTL / 24;
-
-                return $cacheTTL; // eg. 1 hour
+                return $cacheTTL / 24; // TODO use \DateTime
             } elseif ($lastModifiedDiff <= ($cacheTTL * 7)) { // eg. 1 week
-                $cacheTTL = $cacheTTL / 4;
-
-                return $cacheTTL; // eg. 6 hours
+                return $cacheTTL / 4;
             }
-
             return $cacheTTL;
         }
-
         return $cacheTTL;
     }
 
     /**
-     * @param $currentTimestamp
-     * @param $filename
+     * @param int $currentTimestamp
+     * @param string $filename
      * @return int
      */
     protected function getFilemtimeDiff($currentTimestamp, $filename)
     {
         if ($currentTimestamp === null) {
-            $filemtimeDiff = time() - filemtime($filename);
-
-            return $filemtimeDiff;
-        } else {
-            $filemtimeDiff = $currentTimestamp - filemtime($filename);
-
-            return $filemtimeDiff;
+            return time() - filemtime($filename);
         }
+        return $currentTimestamp - filemtime($filename);
     }
 }
