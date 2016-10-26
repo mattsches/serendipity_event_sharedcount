@@ -56,6 +56,7 @@ class serendipity_event_sharedcountTest extends PluginTest
         $serendipity['enablePluginACL'] = false;
         $serendipity['template'] = 'TEMPL';
         $serendipity['template_backend'] = 'TEMPLBACKE';
+        $serendipity['template_engine'] = null;
         $smartyMock = Serendipity_Smarty::getInstance();
         $serendipity['smarty'] = $smartyMock;
         parent::setUp();
@@ -80,7 +81,7 @@ class serendipity_event_sharedcountTest extends PluginTest
     public function testIntrospect()
     {
         $this->object->introspect($this->propBag);
-        $this->assertEquals('0.0.2', $this->propBag->get('version'));
+        $this->assertEquals('0.0.3', $this->propBag->get('version'));
         $this->assertFalse($this->propBag->get('stackable'));
     }
 
