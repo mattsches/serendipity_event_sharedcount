@@ -39,7 +39,7 @@ class serendipity_event_sharedcount extends serendipity_event
                 'php' => '5.4'
             )
         );
-        $propbag->add('version', '0.0.3');
+        $propbag->add('version', '0.0.4');
         $propbag->add(
             'groups',
             version_compare($serendipity['version'], '2.0.beta1') >= 0 ? array(
@@ -198,6 +198,9 @@ class serendipity_event_sharedcount extends serendipity_event
                         $requestFactory->setUrl($entryUrl);
                         $result = $this->getSharedCountForUrl($requestFactory, $currentTimestamp, $eventData[0]['last_modified']);
                         $result = json_decode($result);
+                        if ($result === null) {
+                            return false;
+                        }
                         $sharedCountString = $this->getResultString($result);
                         $eventData[0]['add_footer'] .= $sharedCountString;
                     }
@@ -216,7 +219,11 @@ class serendipity_event_sharedcount extends serendipity_event
                         $entryUrl = serendipity_archiveURL($entry['id'], $entry['title']);
                         $requestFactory->setUrl($entryUrl);
                         $result = $this->getSharedCountForUrl($requestFactory, $currentTimestamp, $entry['last_modified']);
-                        $latestEntries[$key]['sharedcount'] = $this->getResultString(json_decode($result));
+                        $result = json_decode($result);
+                        if ($result === null) {
+                            continue;
+                        }
+                        $latestEntries[$key]['sharedcount'] = $this->getResultString($result);
                     }
                     serendipity_smarty_init();
                     /** @var Serendipity_Smarty $serendipitySmarty */
